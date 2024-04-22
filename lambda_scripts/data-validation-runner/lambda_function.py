@@ -1,7 +1,37 @@
+import boto3
 import csv
 from io import StringIO
 from pathlib import Path
 
+
+
+def lambda_handler(event, context):
+    try:
+        s3_bucket = None
+        input_s3_key = None
+        
+        for record in event["Records"]:
+            s3_bucket = record["s3"]["bucket"]["name"]
+            input_s3_key = record["s3"]["object"]["key"]
+
+        # Initialize the S3 client
+        s3 = boto3.client('s3')
+
+        print('Reading file ' + input_s3_key +  ' from S3 bucket : ' + s3_bucket)
+        response = s3.get_object(Bucket=s3_bucket, Key=input_s3_key)
+        csv_content = response['Body'].read().decode('utf-8')
+
+        valid_rec,corrupt_rec,corrupt_row_count = validator(s3_content=csv_content)
+
+        validoutput_key,corruptoutput_key = output_file_formatter(input_s3_key)
+
+        s3_writer(s3_client=s3,validoutput_s3_key=validoutput_key,corruptoutput_s3_key=corruptoutput_key,corrupt_row=corrupt_row_count,valid=valid_rec,corrupt=corrupt_rec)
+    
+    except Exception as e:
+        print(f"Error writing data to S3: {str(e)}")
+        return False    
+
+    
 def validator(s3_content: str):
         '''
         :param: s3_content as string response from s3 bucket,lambda funciton targeted on.
