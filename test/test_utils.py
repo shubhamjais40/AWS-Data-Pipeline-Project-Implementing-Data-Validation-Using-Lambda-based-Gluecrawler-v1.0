@@ -8,7 +8,7 @@ import boto3
 
 @pytest.fixture
 def s3_boto():
-    s3 = boto3.client('s3',region_name='us-east-1')
+    s3 = boto3.client('s3',region_name='us-east-1',aws_access_key_id="AWS_ACCESS_KEY_ID",aws_secret_access_key="AWS_SECRET_ACCESS_KEY")
     return s3
 
 @pytest.fixture
