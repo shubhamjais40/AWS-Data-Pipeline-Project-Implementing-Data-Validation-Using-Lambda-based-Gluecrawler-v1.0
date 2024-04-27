@@ -54,7 +54,7 @@ def s3_writer(s3_client,validoutput_s3_key,corruptoutput_s3_key,corrupt_row,vali
 
     try:
         s3_client.put_object(Bucket="auto-salesfiltered-batch2024", Key=validoutput_s3_key, Body=valid)
-        print("Valid file writtent successfully...")
+        print("Valid file written successfully...")
 
         if corrupt_row > 0:
             print(f"Total corrupt rows found {corrupt_row}, hence writing to corrupt_batch_file...")
@@ -64,4 +64,5 @@ def s3_writer(s3_client,validoutput_s3_key,corruptoutput_s3_key,corrupt_row,vali
 
     except Exception as e:
         print(f"Error writing data to S3: {str(e)}")
-        return False 
+        return False
+    
